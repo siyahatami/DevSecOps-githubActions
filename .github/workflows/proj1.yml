@@ -93,7 +93,11 @@ jobs:
           # echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > ~/.kube/config
           # cat ~/.kube/config
           echo "---------------------------------------------"
-          /usr/local/bin/kubectl cluster-info
+          pwd
+          ls ~/.kube/config
+          ls /usr/local/kubectl
+          cat ~/.kube/config
+          kubectl cluster-info
 
 
 # curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
