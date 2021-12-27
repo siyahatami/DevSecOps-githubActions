@@ -63,8 +63,4 @@ jobs:
 
 
       - name: my test command2
-        run: |
-          for each in ${{ steps.author.outputs.*}}
-          do
-            echo "$each"
-          done
+        run: echo "dooooooooneeeee"
