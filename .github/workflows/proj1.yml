@@ -62,5 +62,9 @@ jobs:
 
 
 
-      - name: my test command
-        run: echo ${{ steps.author.outputs.* }}  | cat
+      - name: my test command2
+        run: |
+          for each in ${{ steps.author.outputs.*}}
+          do
+            echo "$each"
+          done
