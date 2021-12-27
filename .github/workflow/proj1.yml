@@ -1,0 +1,39 @@
+name: proj1 for nodejs
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  RELEASE_REVISION: "pr-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}"
+  # KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+  KUBE_NAMESPACE: proj1
+
+
+jobs:                                            
+  release:                                       
+    name: Release                                
+    runs-on: ubuntu-latest                       
+    steps:                                       
+      - name: Cancel Previous Runs               
+        uses: styfle/cancel-workflow-action@0.4.1
+        with:                                    
+          access_token: ${{ github.token }} 
+      
+      - name: Checkout
+        id: chackout                        
+        uses: actions/checkout@v2                       
+        with:                                           
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: my test command
+        env:
+          AUTHOR_NAME: "siamak"
+          # AUTHOR_NAME: ${{ steps.author.outputs.author }}
+        run: |
+          pwd
+          echo the author is: $AUTHOR_NAME
+        
+
+
+        
