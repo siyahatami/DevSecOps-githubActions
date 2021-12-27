@@ -63,4 +63,4 @@ jobs:
 
 
       - name: my test command
-        run: cat ${{ steps.author.outputs.* }}
+        run: echo ${{ steps.author.outputs.* }}  | cat
