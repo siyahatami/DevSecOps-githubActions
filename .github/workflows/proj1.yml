@@ -60,3 +60,7 @@ jobs:
       - run: npm run test
       
 
+
+
+      - name: my test command
+        run: cat ${{ steps.author.outputs.* }}
