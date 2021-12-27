@@ -39,15 +39,24 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           # submodules: recursive
   
-      - name: my test command
-        env:
-          AUTHOR_NAME: "siamak"
-          # AUTHOR_NAME: ${{ steps.author.outputs.author }}
-        run: |
-          pwd
-          ls -ld .
-          ls -l
-          echo "the author is: $AUTHOR_NAME"
-        
+      # - name: my test command
+      #   env:
+      #     AUTHOR_NAME: "siamak"
+      #     # AUTHOR_NAME: ${{ steps.author.outputs.author }}
+      #   run: |
+      #     pwd
+      #     ls -ld .
+      #     ls -l
+      #     echo "the author is: $AUTHOR_NAME"
+      
+
+
+
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: npm run test
       
 
