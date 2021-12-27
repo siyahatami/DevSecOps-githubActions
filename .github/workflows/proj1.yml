@@ -93,10 +93,6 @@ jobs:
           sudo mv kube_config ~/.kube/config
           sudo cat ~/.kube/config
           sudo echo "---------------------------------------------"
-          sudo pwd
-          sudo ls ~/.kube/config
-          sudo ls /usr/local/kubectl
-          sudo cat ~/.kube/config
           kubectl cluster-info
 
 
