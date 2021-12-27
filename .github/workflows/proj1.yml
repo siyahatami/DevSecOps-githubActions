@@ -11,8 +11,6 @@ on:
         description: 'Log level'     
         required: true
         default: 'warning'
-      tags:
-        description: 'Test scenario tags'  
             # echo "Log level: ${{ github.event.inputs.logLevel }}"
 
 
@@ -39,7 +37,7 @@ jobs:
         uses: actions/checkout@v2                       
         with:                                           
           ref: ${{ github.event.pull_request.head.sha }}
- 
+          # submodules: recursive
   
       - name: my test command
         env:
@@ -47,7 +45,9 @@ jobs:
           # AUTHOR_NAME: ${{ steps.author.outputs.author }}
         run: |
           pwd
-          echo the author is: $AUTHOR_NAME
+          ls -ld .
+          ls -l
+          echo "the author is: $AUTHOR_NAME"
         
       
 
