@@ -88,8 +88,9 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
           kubectl version --client
+          echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > kube_config
           sudo mkdir -p ~/.kube
-          sudo echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > ~/.kube/config
+          sudo mv kube_config ~/.kube/config
           sudo cat ~/.kube/config
           sudo echo "---------------------------------------------"
           sudo pwd
