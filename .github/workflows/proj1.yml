@@ -32,49 +32,66 @@ jobs:
         with:                                    
           access_token: ${{ github.token }} 
       
-      - name: Checkout
-        id: chackout                        
-        uses: actions/checkout@v2                       
-        with:                                           
-          ref: ${{ github.event.pull_request.head.sha }}
-          # submodules: recursive
+      # - name: Checkout
+      #   id: chackout                        
+      #   uses: actions/checkout@v2                       
+      #   with:                                           
+      #     ref: ${{ github.event.pull_request.head.sha }}
+      #     # submodules: recursive
   
-      # - name: my test command
-      #   env:
-      #     AUTHOR_NAME: "siamak"
-      #     # AUTHOR_NAME: ${{ steps.author.outputs.author }}
+      # # - name: my test command
+      # #   env:
+      # #     AUTHOR_NAME: "siamak"
+      # #     # AUTHOR_NAME: ${{ steps.author.outputs.author }}
+      # #   run: |
+      # #     pwd
+      # #     ls -ld .
+      # #     ls -l
+      # #     echo "the author is: $AUTHOR_NAME"
+      
+
+
+
+
+      # - uses: actions/setup-node@v2
+      #   with:
+      #     node-version: '14'
+      #     cache: 'npm'
+      
+      
+      # - name: install dependencies
       #   run: |
-      #     pwd
-      #     ls -ld .
-      #     ls -l
-      #     echo "the author is: $AUTHOR_NAME"
-      
-
-
-
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
-      
-      
-      - name: install dependencies
-        run: |
-          npm install
-          npm run test
+      #     npm install
+      #     npm run test
      
       
-      - name: Login to DockerHub Registry
-        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      # - name: Login to DockerHub Registry
+      #   run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       
-      - name: Get the version
-        id: vars
-        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+      # - name: Get the version
+      #   id: vars
+      #   run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
 
-      - name: Build the tagged Docker image
-        run: docker build . -f Dockerfile.dev -t siyahatami/proj1:${{github.run_id}}
+      # - name: Build the tagged Docker image
+      #   run: docker build . -f Dockerfile.prod -t siyahatami/proj1:${{github.run_id}}
 
-      - name: Push the tagged Docker image
-        run: docker push siyahatami/proj1:${{github.run_id}}
-        
+      # - name: Push the tagged Docker image
+      #   run: docker push siyahatami/proj1:${{github.run_id}}
+      
+
+
+
+
+      - name: configuring kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mkdir -p ~/.local/bin/kubectl
+          mv ./kubectl ~/.local/bin/kubectl
+          kubectl version --client
+          echo ${{ secrets.KUBER_CONFIG }} > ~/.kube/config
+          cat ~/.kube/config
+          kubectl cluster-info
+
+
+
