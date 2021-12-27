@@ -88,15 +88,14 @@ jobs:
           chmod +x ./kubectl
           sudo mv ./kubectl /usr/local/bin/kubectl
           kubectl version --client
-          # kubectl version --client
-          # mkdir -p ~/.kube
-          # echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > ~/.kube/config
-          # cat ~/.kube/config
-          echo "---------------------------------------------"
-          pwd
-          ls ~/.kube/config
-          ls /usr/local/kubectl
-          cat ~/.kube/config
+          sudo mkdir -p ~/.kube
+          sudo echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > ~/.kube/config
+          sudo cat ~/.kube/config
+          sudo echo "---------------------------------------------"
+          sudo pwd
+          sudo ls ~/.kube/config
+          sudo ls /usr/local/kubectl
+          sudo cat ~/.kube/config
           kubectl cluster-info
 
 
