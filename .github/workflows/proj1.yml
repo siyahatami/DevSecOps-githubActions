@@ -56,11 +56,27 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: npm install
-      - run: npm run test
       
+      
+      - name: install dependencies
+        run: |
+          npm install
+          npm run test
+     
+      
+      - name: Login to DockerHub Registry
+        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      
+      - name: Get the version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
 
+      - name: Build the tagged Docker image
+        run: docker build . -f Dockerfile.dev -t siya.hatami/proj1:${{steps.vars.outputs.tag}}
 
-
-      - name: my test command2
-        run: echo "dooooooooneeeee"
+      - name: Push the tagged Docker image
+        run: docker push siya.hatami/proj1:${{steps.vars.outputs.tag}}
+        
+      - name: Push the latest Docker image
+        run: docker push siya.hatami/proj1:${{steps.vars.outputs.tag}}
+      
