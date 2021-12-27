@@ -56,6 +56,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+          cache: 'npm'
       
       
       - name: install dependencies
@@ -72,8 +73,8 @@ jobs:
         run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
 
       - name: Build the tagged Docker image
-        run: docker build . -f Dockerfile.dev -t siya.hatami/proj1:$RELEASE_REVISION
+        run: docker build . -f Dockerfile.dev -t siyahatami/proj1:${{github.run_id}}
 
       - name: Push the tagged Docker image
-        run: docker push siya.hatami/proj1:$RELEASE_REVISION
+        run: docker push siyahatami/proj1:${{github.run_id}}
         
