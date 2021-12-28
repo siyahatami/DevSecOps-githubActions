@@ -51,8 +51,6 @@ jobs:
       
 
 
-
-
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
@@ -74,6 +72,19 @@ jobs:
 
       - name: Push the tagged Docker image
         run: docker push siyahatami/proj1:${{github.run_id}}
+
+
+
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/siyahatami/proj1:${{github.run_id}}'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
       
   
 
@@ -100,8 +111,6 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
 
-      - name: Perform CodeQL Analysis 2
-        uses: rcowsill/workflow-scan-action@v1
 
 
 
