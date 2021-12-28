@@ -97,7 +97,12 @@ jobs:
 
 
       - name: update infra ymls
-        run: sed -i 's/image_tag/${{github.run_id}}/g' infra/web-depl.yaml
+        run: sed -i 's/image_tag/${{github.run_id}}/g' ../../infra/web-depl.yaml
+
+
+
+      - name: asdfymls
+        run: cat ../../infra/web-depl.yaml
 
 
 
