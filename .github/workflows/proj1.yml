@@ -82,22 +82,28 @@ jobs:
 
 
 
-      - name: configuring kubectl
-        run: |
-          curl -LO "https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
-          kubectl version --client
-          
-          echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > kube_config
-          sudo mkdir -p ~/.kube
-          sudo mv kube_config ~/.kube/config
-          sudo cat ~/.kube/config
-          sudo echo "---------------------------------------------"
-          export KUBECONFIG=~/.kube/config
-          kubectl cluster-info
-          echo $KUBECONFIG
+      # - name: configuring kubectl
+      #   run: |
+      #     curl -LO "https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl"
+      #     chmod +x ./kubectl
+      #     sudo mv ./kubectl /usr/local/bin/kubectl
+      #     echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > kube_config
+      #     sudo mkdir -p ~/.kube
+      #     sudo mv kube_config ~/.kube/config
+      #     export KUBECONFIG=~/.kube/config
+      #     kubectl cluster-info
 
 
-# curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/kubectl
+
+
+      - name: update infra ymls
+        run: sed -i 's/image_tag/${{github.run_id}}/g' infra/web-depl.yaml
+
+
+
+
+
+
+
+
 
