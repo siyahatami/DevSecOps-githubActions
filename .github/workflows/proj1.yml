@@ -32,12 +32,12 @@ jobs:
         with:                                    
           access_token: ${{ github.token }} 
       
-      # - name: Checkout
-      #   id: chackout                        
-      #   uses: actions/checkout@v2                       
-      #   with:                                           
-      #     ref: ${{ github.event.pull_request.head.sha }}
-      #     # submodules: recursive
+      - name: Checkout
+        id: chackout                        
+        uses: actions/checkout@v2                       
+        with:                                           
+          ref: ${{ github.event.pull_request.head.sha }}
+          # submodules: recursive
   
       # # - name: my test command
       # #   env:
