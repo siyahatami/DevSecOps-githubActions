@@ -91,27 +91,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v1
         with:
           languages: javascript
           config-file: ./.github/codeql/codeql-config.yml
 
-
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
 
-      
-      # - name: Perform CodeQL Analysis 2
-      #   uses: rcowsill/workflow-scan-action@v1
+      - name: Perform CodeQL Analysis 2
+        uses: rcowsill/workflow-scan-action@v1
+
+
+
+
+
+  # Deliver:
+  #   runs-on: ubuntu-latest                       
+  #   needs: CI
+  #   steps:
+
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+
 
 
 
 
 
   CD:
-    name: Codeql                                
+    name: Deploy                                
     runs-on: ubuntu-latest                       
     needs: CI
     steps:
