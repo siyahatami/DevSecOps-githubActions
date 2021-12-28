@@ -4,6 +4,7 @@ metadata:
   name: mongo-depl
   labels:
     app: mongo
+  Namespace: proj1
 spec:
   replicas: 1
   selector:
