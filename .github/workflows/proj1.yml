@@ -103,7 +103,7 @@ jobs:
 
 
       - name: deploy
-        run: kubectl apply infra/
+        run: kubectl apply -f infra/
 
 
 
