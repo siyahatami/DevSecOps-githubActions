@@ -103,7 +103,7 @@ jobs:
 
 
       - name: deploy
-        run: kubectl apply -f infra/
+        run: kubectl apply -f infra/ -n proj1
 
       - name: deploy2
         run: kubectl get all -n proj1
