@@ -5,7 +5,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: web
+    app: mongo
   ports:
     - protocol: TCP
       targetPort: 27017       # container port
