@@ -43,7 +43,7 @@ module.exports.connect = async (_mongoUrl) => {
 
   app.get('/', (req, res) => {
 
-    res.send('Hello Worldddd!')
+    res.send('Hello World!')
   })
 
 
