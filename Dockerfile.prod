@@ -9,7 +9,7 @@ COPY . .
 
 FROM node:lts-alpine
 WORKDIR /app
-COPY --from=appbuild /app/ ./app
+COPY --from=appbuild /app/ .
 EXPOSE 3000
 CMD npm run prod
 
