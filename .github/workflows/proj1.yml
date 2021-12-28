@@ -63,6 +63,9 @@ jobs:
           npm run test
      
 
+      # - name: Unit test
+      #   run: npm run test
+
 
       - name: Login to DockerHub Registry
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
@@ -76,47 +79,112 @@ jobs:
 
 
 
+      # - name: Run Trivy vulnerability scanner
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     image-ref: 'docker.io/siyahatami/proj1:${{github.run_id}}'
+      #     format: 'table'
+      #     exit-code: '1'
+      #     ignore-unfixed: true
+      #     vuln-type: 'os,library'
+      #     severity: 'CRITICAL,HIGH'
+
+      
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'docker.io/siyahatami/proj1:${{github.run_id}}'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-      
+          image-ref: 'docker.io/my-organization/my-app:${{ github.sha }}'
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+          
+
+      # - name: Run Trivy vulnerability scanner in IaC mode
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     scan-type: 'config'
+      #     hide-progress: false
+      #     format: 'table'
+      #     exit-code: '1'
+      #     ignore-unfixed: true
+      #     severity: 'CRITICAL,HIGH'
+
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v1
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
   
 
+        
+      # - name: Run Trivy vulnerability scanner in repo mode
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     scan-type: 'fs'
+      #     ignore-unfixed: true
+      #     format: 'template'
+      #     template: '@/contrib/sarif.tpl'
+      #     output: 'trivy-results.sarif'
+      #     severity: 'CRITICAL'
 
-
-  Codeql:
-    runs-on: ubuntu-latest                       
-    needs: CI
-    permissions:
-      security-events: write
-      # actions: read
-      # contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v1
-        with:
-          languages: javascript
-          config-file: ./.github/codeql/codeql-config.yml
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v1
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v1
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
 
 
 
 
 
 
-  # Deliver:
+
+  # Codeql:
+  #   runs-on: ubuntu-latest                       
+  #   needs: CI
+  #   permissions:
+  #     security-events: write
+  #     # actions: read
+  #     # contents: read
+
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+
+  #     - name: Initialize CodeQL
+  #       uses: github/codeql-action/init@v1
+  #       with:
+  #         languages: javascript
+  #         config-file: ./.github/codeql/codeql-config.yml
+
+  #     - name: Perform CodeQL Analysis
+  #       uses: github/codeql-action/analyze@v1
+
+
+
+
+
+
+  # # Deliver:
+  # #   runs-on: ubuntu-latest                       
+  # #   needs: CI
+  # #   steps:
+
+  # #     - name: Checkout
+  # #       uses: actions/checkout@v2
+
+
+
+
+
+
+  # CD:
+  #   name: Deploy                                
   #   runs-on: ubuntu-latest                       
   #   needs: CI
   #   steps:
@@ -125,41 +193,27 @@ jobs:
   #       uses: actions/checkout@v2
 
 
+  #     - name: configuring kubectl
+  #       run: |
+  #         curl -LO "https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl"
+  #         chmod +x ./kubectl
+  #         sudo mv ./kubectl /usr/local/bin/kubectl
+  #         echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > kube_config
+  #         sudo mkdir -p ~/.kube
+  #         sudo mv kube_config ~/.kube/config
+  #         export KUBECONFIG=~/.kube/config
+  #         kubectl cluster-info
 
 
+  #     - name: update infra ymls
+  #       run: sed -i 's/image_tag/${{github.run_id}}/g' infra/web-depl.yaml
 
 
-  CD:
-    name: Deploy                                
-    runs-on: ubuntu-latest                       
-    needs: CI
-    steps:
+  #     - name: deploy
+  #       run: kubectl apply -f infra/ -n proj1
 
-      - name: Checkout
-        uses: actions/checkout@v2
-
-
-      - name: configuring kubectl
-        run: |
-          curl -LO "https://dl.k8s.io/release/v1.21.0/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          sudo mv ./kubectl /usr/local/bin/kubectl
-          echo ${{ secrets.KUBER_CONFIG_base64 }} | base64 --decode > kube_config
-          sudo mkdir -p ~/.kube
-          sudo mv kube_config ~/.kube/config
-          export KUBECONFIG=~/.kube/config
-          kubectl cluster-info
-
-
-      - name: update infra ymls
-        run: sed -i 's/image_tag/${{github.run_id}}/g' infra/web-depl.yaml
-
-
-      - name: deploy
-        run: kubectl apply -f infra/ -n proj1
-
-      - name: deploy2
-        run: kubectl get all -n proj1
+  #     - name: deploy2
+  #       run: kubectl get all -n proj1
 
 
 
