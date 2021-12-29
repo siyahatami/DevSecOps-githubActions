@@ -143,9 +143,19 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           docker_name: 'owasp/zap2docker-stable'
-          target: 'https://www.mainhis.com/account/login'
-          rules_file_name: '.zap/rules.tsv'
+          target: 'http://185.135.30.87:30010/'
+          rules_file_name: 'ci_cd/.zap/rules.tsv'
           cmd_options: '-a'
+          # output: .github/workflows/zap-scan.yml
+          
+          # or 
+          # docker run -i owasp/zap2docker-stable zap-cli quick-scan --self-contained \
+          #   --start-options '-config api.disablekey=true' http://target
+
+          #  docker run -p 8090:8090 -i owasp/zap2docker-stable zap.sh -daemon -port 8090 -host 0.0.0.0
+
+
+
 
 
   #     - name: run dependency check scan
