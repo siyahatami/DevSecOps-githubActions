@@ -1,0 +1,45 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: archerysec-depl
+  labels:
+    app: archerysec
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: archerysec
+  template:
+    metadata:
+      labels:
+        app: archerysec
+    spec:
+      containers:
+      - name: archerysec
+        image: archerysec/archerysec:alpine
+        ports:
+          - containerPort: 8000
+        env:
+          - name: NAME
+            value: "siamak"
+          - name: EMAIL
+            value: "siya.hatami@gmail.com"
+          - name: PASSWORD
+            value: "admin"
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: archerysec
+spec:
+  type: NodePort
+  selector:
+    app: archerysec
+  ports:
+    - protocol: TCP
+      targetPort: 8000       # container port
+      port: 80             # for inside the cluster access
+      nodePort: 30800      # on node

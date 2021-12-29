@@ -11,3 +11,6 @@ spec:
       targetPort: 3000       # container port
       port: 80             # for inside the cluster access
       nodePort: 30010      # on node
+
+
+

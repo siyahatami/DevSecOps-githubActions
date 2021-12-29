@@ -23,58 +23,58 @@ env:
 
 
 jobs:                                            
-  CI:                                       
-    name: CI                                
-    runs-on: ubuntu-latest                       
-    steps:                                       
-      - name: Cancel Previous Runs               
-        uses: styfle/cancel-workflow-action@0.4.1
-        with:                                    
-          access_token: ${{ github.token }} 
+  # CI:                                       
+  #   name: CI                                
+  #   runs-on: ubuntu-latest                       
+  #   steps:                                       
+  #     - name: Cancel Previous Runs               
+  #       uses: styfle/cancel-workflow-action@0.4.1
+  #       with:                                    
+  #         access_token: ${{ github.token }} 
       
-      - name: Checkout
-        id: chackout                        
-        uses: actions/checkout@v2                       
-        with:                                           
-          ref: ${{ github.event.pull_request.head.sha }}
-          # submodules: recursive
+  #     - name: Checkout
+  #       id: chackout                        
+  #       uses: actions/checkout@v2                       
+  #       with:                                           
+  #         ref: ${{ github.event.pull_request.head.sha }}
+  #         # submodules: recursive
   
-      # - name: my test command
-      #   env:
-      #     AUTHOR_NAME: "siamak"
-      #     # AUTHOR_NAME: ${{ steps.author.outputs.author }}
-      #   run: |
-      #     pwd
-      #     ls -ld .
-      #     ls -l
-      #     echo "the author is: $AUTHOR_NAME"
+  #     # - name: my test command
+  #     #   env:
+  #     #     AUTHOR_NAME: "siamak"
+  #     #     # AUTHOR_NAME: ${{ steps.author.outputs.author }}
+  #     #   run: |
+  #     #     pwd
+  #     #     ls -ld .
+  #     #     ls -l
+  #     #     echo "the author is: $AUTHOR_NAME"
       
 
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-          cache: 'npm'
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '14'
+  #         cache: 'npm'
       
       
-      - name: install dependencies
-        run: |
-          npm install
-          npm run test
+  #     - name: install dependencies
+  #       run: |
+  #         npm install
+  #         npm run test
      
 
-      # - name: Unit test
-      #   run: npm run test
+  #     # - name: Unit test
+  #     #   run: npm run test
 
 
-      - name: Login to DockerHub Registry
-        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+  #     - name: Login to DockerHub Registry
+  #       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       
-      - name: Build the tagged Docker image
-        run: docker build . -f Dockerfile.prod -t siyahatami/proj1:${{github.run_id}}
+  #     - name: Build the tagged Docker image
+  #       run: docker build . -f Dockerfile.prod -t siyahatami/proj1:${{github.run_id}}
 
-      - name: Push the tagged Docker image
-        run: docker push siyahatami/proj1:${{github.run_id}}
+  #     - name: Push the tagged Docker image
+  #       run: docker push siyahatami/proj1:${{github.run_id}}
 
 
 
@@ -109,24 +109,144 @@ jobs:
   
 
         
-      - name: Run Trivy vulnerability scanner in repo mode
-        uses: aquasecurity/trivy-action@master
+      # - name: Run Trivy vulnerability scanner in repo mode
+      #   uses: aquasecurity/trivy-action@master
+      #   with:
+      #     scan-type: 'fs'
+      #     ignore-unfixed: true
+      #     format: 'template'
+      #     template: '@/contrib/sarif.tpl'
+      #     output: 'trivy-results.sarif'
+      #     severity: 'CRITICAL'
+
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v1
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
+
+
+
+
+  # --------------------------------------------------------------------------------------
+
+  SAST:
+    name: Scurity Scanner
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      
+
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
         with:
-          scan-type: 'fs'
-          ignore-unfixed: true
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL'
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: 'trivy-results.sarif'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          docker_name: 'owasp/zap2docker-stable'
+          target: 'https://www.mainhis.com/account/login'
+          rules_file_name: '.zap/rules.tsv'
+          cmd_options: '-a'
 
 
+  #     - name: run dependency check scan
+  #       run: |
+  #        docker run \
+  #         --env SECURE_LOG_LEVEL=${SECURE_LOG_LEVEL} \
+  #         -v "$PWD:/code" \
+  #         -v /var/run/docker.sock:/var/run/docker.sock \
+  #         registry.gitlab.com/gitlab-org/security-products/dependency-scanning:latest /code
+  #         ls
+  #         sudo apt-get install jq
+  #         sudo pip install archerysec-cli
+  #         DATE=`date +%Y-%m-%d`
+  #         export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
+  #        --project_name=devsecops --project_disc="devsecops project" --project_start=${DATE} \
+  #        --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
+  #         # Upload Scan report in archerysec
+  #         export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
+  #         --upload --file_type=JSON --file=gl-dependency-scanning-report.json --TARGET=${GITHUB_SHA} \
+  #         --scanner=gitlabsca --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
+  #         echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
+  #       env:
+  #         ARCHERYSEC_HOST: ${{ secrets.ARCHERYSEC_HOST }}
+  #         ARCHERYSEC_USER: ${{ secrets.ARCHERYSEC_USER }}
+  #         ARCHERYSEC_PASS: ${{ secrets.ARCHERYSEC_PASS }}
 
 
+
+      # - name: run source code review
+      #   run: |
+      #    docker run \
+      #     --volume "$PWD:/code" \
+      #     --volume /var/run/docker.sock:/var/run/docker.sock \
+      #     registry.gitlab.com/gitlab-org/security-products/sast:latest /app/bin/run /code
+      #     ls
+      #         sudo apt-get install jq
+      #         sudo pip install archerysec-cli
+      #       DATE=`date +%Y-%m-%d`
+      #        export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
+      #        --project_name=devsecops --project_disc="devsecops project" --project_start=${DATE} \
+      #        --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
+      #       export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
+      #       --upload --file_type=JSON --file=gl-sast-report.json --TARGET=${GITHUB_SHA} \
+      #       --scanner=gitlabsast --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
+      #       echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
+      #   env:
+      #     ARCHERYSEC_HOST: ${{ secrets.ARCHERYSEC_HOST }}
+      #     ARCHERYSEC_USER: ${{ secrets.ARCHERYSEC_USER }}
+      #     ARCHERYSEC_PASS: ${{ secrets.ARCHERYSEC_PASS }}
+      # - name: run DAST scan
+      #   run: |
+      #     # create wrk folder
+      #     mkdir wrk
+      #     chmod 777 wrk
+      #     docker run \
+      #      --volume $(pwd)/wrk:/output:rw \
+      #      --volume $(pwd)/wrk:/zap/wrk:rw \
+      #      registry.gitlab.com/gitlab-org/security-products/dast:latest /analyze -t ${ARCHERYSEC_HOST} \
+      #     --auth-url ${ARCHERYSEC_AUTH_HOST} \
+      #     --auth-username ${ARCHERYSEC_USER} \
+      #     --auth-password ${ARCHERYSEC_PASS} \
+      #     --auth-username-field 'username' \
+      #     --auth-password-field 'password' \
+      #     --auth-exclude-urls ${ARCHERYSEC_EXCLUDE_HOST} \
+      #     --full-scan True \
+      #      -x report.xml
+      #     sudo apt-get install jq
+      #     sudo pip install archerysec-cli
+      #     DATE=`date +%Y-%m-%d`
+      #     export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
+      #     --project_name=devsecops --project_disc="devsecops project" --project_start=${DATE} \
+      #     --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
+      #     export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
+      #     --upload --file_type=XML --file=wrk/report.xml --TARGET=${GITHUB_SHA} \
+      #     --scanner=zap_scan --project_id=''$PROJECT_ID'' | tail -n1 | jq '.scan_id' | sed -e 's/^"//' -e 's/"$//'`
+      #     echo "Scan Report Uploaded Successfully, Scan Id:" $SCAN_ID
+      #   env:
+      #     ARCHERYSEC_HOST: ${{ secrets.ARCHERYSEC_HOST }}
+      #     ARCHERYSEC_AUTH_HOST: ${{ secrets.ARCHERYSEC_AUTH_HOST }}
+      #     ARCHERYSEC_EXCLUDE_HOST: ${{ secrets.ARCHERYSEC_EXCLUDE_HOST }}
+      #     ARCHERYSEC_USER: ${{ secrets.ARCHERYSEC_USER }}
+      #     ARCHERYSEC_PASS: ${{ secrets.ARCHERYSEC_PASS }}
+
+      # - name: run Infrastructure Scan
+      #   run: |
+      #     sudo apt-get install jq
+      #     sudo pip install archerysec-cli
+      #     DATE=`date +%Y-%m-%d`
+      #     export PROJECT_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} --createproject \
+      #     --project_name=devsecops --project_disc="devsecops project" --project_start=${DATE} \
+      #     --project_end=${DATE} --project_owner=dev | tail -n1 | jq '.project_id' | sed -e 's/^"//' -e 's/"$//'`
+      #     export SCAN_ID=`archerysec-cli -s ${ARCHERYSEC_HOST} -u ${ARCHERYSEC_USER} -p ${ARCHERYSEC_PASS} \
+      #     --openvasscan --target_ip=${ARCHERYSEC_TARGET_HOST} --project_id=${PROJECT_ID}`
+      #   env:
+      #     ARCHERYSEC_HOST: ${{ secrets.ARCHERYSEC_HOST }}
+      #     ARCHERYSEC_USER: ${{ secrets.ARCHERYSEC_USER }}
+      #     ARCHERYSEC_PASS: ${{ secrets.ARCHERYSEC_PASS }}
+      #     ARCHERYSEC_TARGET_HOST: ${{ secrets.ARCHERYSEC_TARGET_HOST }}
+
+
+  # --------------------------------------------------------------------------------------
 
 
 
