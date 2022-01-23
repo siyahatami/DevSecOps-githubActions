@@ -78,17 +78,17 @@ jobs:
 
 
 
-      - name: Scan current project
-        uses: anchore/scan-action@v3
-        with:
-          path: "."
+      #- name: Scan current project
+      #  uses: anchore/scan-action@v3
+      #  with:
+      #    path: "."
 
       - uses: anchore/scan-action@v3
         id: scan
         with:
           image: "docker.io/siyahatami/proj1:${{github.run_id}}"
           # severity-cutoff: critical
-          fail-build: true
+          fail-build: false
           acs-report-enable: true
           
       - name: upload Anchore scan SARIF report
