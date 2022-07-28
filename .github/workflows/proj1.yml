@@ -169,11 +169,12 @@ jobs:
 
 
 
-      - name: kubesec
-        uses: controlplaneio/kubesec-action@master
-        with:
-          if: always()
-          input: k8s
+      - name: kubescan
+        if: always()
+        run: |
+         docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s/base-config.yaml
+         docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s/innsecure.yaml
+         docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s/postgres.yaml
 
 
 
