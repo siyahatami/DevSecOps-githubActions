@@ -125,14 +125,15 @@ jobs:
           exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH,Medium'
-	  
+
       #- name: Upload Trivy scan results to GitHub Security tab
       #  uses: github/codeql-action/upload-sarif@v1
       #  with:
       #    sarif_file: 'trivy-results.sarif'
-	  
-	  
-      
+
+
+
+
       - name: t3 #Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
@@ -143,12 +144,11 @@ jobs:
           template: '@/contrib/sarif.tpl'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,High,Medium'
-	  
+
       #- name: Upload Trivy scan results to GitHub Security tab
       #  uses: github/codeql-action/upload-sarif@v1
       #  with:
       #    sarif_file: 'trivy-results.sarif'
-	  #
 
 
 
