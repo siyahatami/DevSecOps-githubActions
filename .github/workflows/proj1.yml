@@ -104,8 +104,8 @@ jobs:
 
       - name: t1 #Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
-          if: always()
           image-ref: "docker.io/siyahatami/myinsecure:latest"
           format: 'table'
           exit-code: '1'
@@ -118,8 +118,8 @@ jobs:
 
       - name: t2 #Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
-          if: always()
           image-ref: "docker.io/siyahatami/myinsecure:latest"
           scan-type: 'config'
           hide-progress: false
@@ -138,8 +138,8 @@ jobs:
 
       - name: t3 #Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
+        continue-on-error: true
         with:
-          if: always()
           image-ref: "docker.io/siyahatami/myinsecure:latest"
           scan-type: 'fs'
           ignore-unfixed: true
@@ -160,8 +160,8 @@ jobs:
 
       - name: kube-linter
         uses: stackrox/kube-linter-action@v1.0.4
+        continue-on-error: true
         with:
-          if: always()
           directory: k8s
           #config: .kube-linter/config.yaml
           format: sarif
@@ -170,7 +170,7 @@ jobs:
 
 
       - name: kubescan
-        if: always()
+        continue-on-error: true
         run: |
          docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s/base-config.yaml
          docker run -i kubesec/kubesec:512c5e0 scan /dev/stdin < k8s/innsecure.yaml
@@ -179,10 +179,10 @@ jobs:
 
 
       - name: Terrascan
+        continue-on-error: true
         id: terrascan
         uses: tenable/terrascan-action@main
         with:
-          if: always()
           iac_type: 'terraform'
           iac_version: 'v14'
           #policy_type: 'aws'
