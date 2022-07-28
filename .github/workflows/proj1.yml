@@ -1,3 +1,4 @@
+
 name: proj1 for nodejs
 
 on:
@@ -86,7 +87,8 @@ jobs:
       - uses: anchore/scan-action@v3
         id: scan
         with:
-          image: "docker.io/siyahatami/proj1:${{github.run_id}}"
+          #image: "docker.io/siyahatami/proj1:${{github.run_id}}"
+          image-ref: "docker.io/siyahatami/myinsecure:latest"
           # severity-cutoff: critical
           fail-build: false
           acs-report-enable: true
@@ -100,51 +102,53 @@ jobs:
 
 
 
-      # - name: Run Trivy vulnerability scanner
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     image-ref: 'docker.io/siyahatami/proj1:${{github.run_id}}'
-      #     format: 'table'
-      #     exit-code: '1'
-      #     ignore-unfixed: true
-      #     vuln-type: 'os,library'
-      #     severity: 'CRITICAL,HIGH'
-
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "docker.io/siyahatami/myinsecure:latest"
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+	  
       
-
-
-      # - name: Run Trivy vulnerability scanner in IaC mode
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     scan-type: 'config'
-      #     hide-progress: false
-      #     format: 'table'
-      #     exit-code: '1'
-      #     ignore-unfixed: true
-      #     severity: 'CRITICAL,HIGH'
-
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v1
-      #   with:
-      #     sarif_file: 'trivy-results.sarif'
-  
-
-        
-      # - name: Run Trivy vulnerability scanner in repo mode
-      #   uses: aquasecurity/trivy-action@master
-      #   with:
-      #     scan-type: 'fs'
-      #     ignore-unfixed: true
-      #     format: 'template'
-      #     template: '@/contrib/sarif.tpl'
-      #     output: 'trivy-results.sarif'
-      #     severity: 'CRITICAL'
-
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v1
-      #   with:
-      #     sarif_file: 'trivy-results.sarif'
-
+	  
+	  
+      - name: Run Trivy vulnerability scanner in IaC mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "docker.io/siyahatami/myinsecure:latest"
+          scan-type: 'config'
+          hide-progress: false
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+	  
+      #- name: Upload Trivy scan results to GitHub Security tab
+      #  uses: github/codeql-action/upload-sarif@v1
+      #  with:
+      #    sarif_file: 'trivy-results.sarif'
+	  
+	  
+      
+      - name: Run Trivy vulnerability scanner in repo mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "docker.io/siyahatami/myinsecure:latest"
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'template'
+          template: '@/contrib/sarif.tpl'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL'
+	  
+      #- name: Upload Trivy scan results to GitHub Security tab
+      #  uses: github/codeql-action/upload-sarif@v1
+      #  with:
+      #    sarif_file: 'trivy-results.sarif'
+	  #
 
 
 
@@ -351,6 +355,14 @@ jobs:
 
   #     - name: deploy2
   #       run: kubectl get all -n proj1
+
+
+
+
+
+
+
+
 
 
 
