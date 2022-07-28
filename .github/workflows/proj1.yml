@@ -105,6 +105,7 @@ jobs:
       - name: t1 #Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
+          if: always()
           image-ref: "docker.io/siyahatami/myinsecure:latest"
           format: 'table'
           exit-code: '1'
@@ -118,6 +119,7 @@ jobs:
       - name: t2 #Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@master
         with:
+          if: always()
           image-ref: "docker.io/siyahatami/myinsecure:latest"
           scan-type: 'config'
           hide-progress: false
@@ -137,6 +139,7 @@ jobs:
       - name: t3 #Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
+          if: always()
           image-ref: "docker.io/siyahatami/myinsecure:latest"
           scan-type: 'fs'
           ignore-unfixed: true
@@ -149,6 +152,51 @@ jobs:
       #  uses: github/codeql-action/upload-sarif@v1
       #  with:
       #    sarif_file: 'trivy-results.sarif'
+
+
+
+
+
+
+      - name: kube-linter
+        uses: stackrox/kube-linter-action@v1.0.4
+        with:
+          if: always()
+          directory: k8s
+          #config: .kube-linter/config.yaml
+          format: sarif
+          output-file: kube-linter.sarif
+
+
+
+      - name: kubesec
+        uses: controlplaneio/kubesec-action@master
+        with:
+          if: always()
+          input: k8s
+
+
+
+      - name: Terrascan
+        id: terrascan
+        uses: tenable/terrascan-action@main
+        with:
+          if: always()
+          iac_type: 'terraform'
+          iac_version: 'v14'
+          #policy_type: 'aws'
+          only_warn: true
+          #scm_token: ${{ secrets.ACCESS_TOKEN }}
+          #verbose: true
+          #sarif_upload: true
+          #non_recursive:
+          iac_dir: k8s
+          #policy_path:
+          #skip_rules:
+          #config_path:
+          #find_vulnerabilities:
+          #webhook_url:
+          #webhook_token:
 
 
 
