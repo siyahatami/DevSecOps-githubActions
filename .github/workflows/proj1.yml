@@ -71,8 +71,8 @@ jobs:
   #     - name: Login to DockerHub Registry
   #       run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
       
-      - name: Build the tagged Docker image
-        run: docker build . -f Dockerfile.prod -t siyahatami/proj1:${{github.run_id}}
+      #- name: Build the tagged Docker image
+      #  run: docker build . -f Dockerfile.prod -t siyahatami/proj1:${{github.run_id}}
 
   #     - name: Push the tagged Docker image
   #       run: docker push siyahatami/proj1:${{github.run_id}}
@@ -84,25 +84,25 @@ jobs:
       #  with:
       #    path: "."
 
-      - uses: anchore/scan-action@v3
-        id: scan
-        with:
-          #image: "docker.io/siyahatami/proj1:${{github.run_id}}"
-          image-ref: "docker.io/siyahatami/myinsecure:latest"
-          # severity-cutoff: critical
-          fail-build: false
-          acs-report-enable: true
-          
-      - name: upload Anchore scan SARIF report
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: ${{ steps.scan.outputs.sarif }}
+      #- uses: anchore/scan-action@v3
+      #  id: scan
+      #  with:
+      #    #image: "docker.io/siyahatami/proj1:${{github.run_id}}"
+      #    image-ref: "docker.io/siyahatami/myinsecure:latest"
+      #    # severity-cutoff: critical
+      #    fail-build: false
+      #    acs-report-enable: true
+      #    
+      #- name: upload Anchore scan SARIF report
+      #  uses: github/codeql-action/upload-sarif@v1
+      #  with:
+      #    sarif_file: ${{ steps.scan.outputs.sarif }}
 
 
 
 
 
-      - name: Run Trivy vulnerability scanner
+      - name: t1 #Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "docker.io/siyahatami/myinsecure:latest"
@@ -115,7 +115,7 @@ jobs:
       
 	  
 	  
-      - name: Run Trivy vulnerability scanner in IaC mode
+      - name: t2 #Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "docker.io/siyahatami/myinsecure:latest"
@@ -133,7 +133,7 @@ jobs:
 	  
 	  
       
-      - name: Run Trivy vulnerability scanner in repo mode
+      - name: t3 #Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: "docker.io/siyahatami/myinsecure:latest"
